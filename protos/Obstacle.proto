@@ -1,0 +1,27 @@
+#VRML_SIM R2023b utf8
+PROTO Obstacle [
+  field SFVec3f translation 0 0 0.05   # position (slightly above ground)
+  field SFColor color 0.3 0.3 0.3      # default gray
+  field SFFloat size 0.2               # base size (radius or half-length)
+  field SFFloat height 0.2             # height for cylinder/cone
+  field SFString shape "box"           # "box", "cylinder", "cone"
+  field SFString solidName ""          # unique identifier
+]
+{
+  Solid {
+    translation IS translation
+    name IS solidName
+    children [
+      Shape {
+        appearance PBRAppearance {
+          baseColor IS color
+          roughness 1
+          metalness 0
+        }
+        geometry USE_GEOM
+      }
+    ]
+    boundingObject USE_GEOM
+    physics Physics {}
+  }
+}

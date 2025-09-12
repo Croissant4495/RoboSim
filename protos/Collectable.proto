@@ -1,0 +1,27 @@
+#VRML_SIM R2023b utf8
+PROTO Collectable [
+  field SFVec3f translation 0 0 0.001   # position
+  field SFColor color 1 0 0             # default color
+  field SFVec3f size 0.5 0.5 0.01            # width/length
+  field SFString solidName ""
+]
+{
+  Solid {
+    translation IS translation
+    name IS solidName
+    children [
+      Shape {
+        appearance PBRAppearance {
+          baseColor IS color
+          roughness 1
+          metalness 0
+        }
+        geometry Box {
+          size IS size   # flat box with small height
+        }
+      }
+    ]
+    boundingObject NULL    # no collisions
+    physics NULL           # non-physical
+  }
+}

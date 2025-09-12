@@ -1,0 +1,27 @@
+#VRML_SIM R2023b utf8
+PROTO Area [
+  field SFVec3f translation 0 0 0.001   # position
+  field SFColor color 0 1 0             # default green
+  field SFVec3f size 1 1 0.01           # tile width/length + small height
+  field SFString solidName ""           # optional name
+]
+{
+  Solid {
+    translation IS translation
+    name IS solidName
+    children [
+      Shape {
+        appearance PBRAppearance {
+          baseColor IS color
+          roughness 1
+          metalness 0
+        }
+        geometry Box {
+          size IS size
+        }
+      }
+    ]
+    boundingObject NULL
+    physics NULL
+  }
+}
