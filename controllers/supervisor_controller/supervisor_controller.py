@@ -64,7 +64,8 @@ while SupervisorRobot.step(TIME_STEP) != -1:
 		scores[1] += 1
 		collectable_manager.spawn_random_box()
 
-	if i % 50 == 0:  # every 50 steps, print tracked instances
-		print("Tracked objects:", collectable_manager.list_instances())
+	# if i % 50 == 0:  # every 50 steps, print tracked instances
+
+		# print("Tracked objects:", collectable_manager.list_instances())
 
 	i += 1

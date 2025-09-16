@@ -1,0 +1,91 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+IMPORTABLE EXTERNPROTO "../protos/Collectable.proto"
+IMPORTABLE EXTERNPROTO "../protos/Area.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.4068024084136641 -0.4021128822234063 0.820254247449428 4.504181291719876
+  position -0.26626876734870003 2.9217513894879716 3.7250484910745874
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 2 2
+  floorTileSize 0.25 0.25
+  floorAppearance PBRAppearance {
+    baseColor 0.9 0.9 0.9
+    roughness 1
+    metalness 0
+  }
+}
+Robot {
+  name "supervisor"
+  controller "supervisor"  # Changed from "supervisor_controller"
+  supervisor TRUE
+  children [
+    Receiver {
+      channel 1
+      name "receiver"  # Added name to match the code
+    }
+  ]
+}
+DEF puck Robot {
+  name "puck_blue" # Give this robot a unique name
+  translation 0 0 0
+  children [
+    E-puck {
+      rotation 0 0 1 1.5708
+      version "2"
+      controller "Team_blue"
+    }
+    Emitter {
+      channel 1
+    }
+  ]
+}
+
+DEF puck2 Robot {
+  name "puck_red" # Give this robot a unique name
+  translation 0.32 0 0
+  children [
+    E-puck {
+      rotation 0 0 1 1.5708
+      controller "Team_red"
+    }
+    Emitter {
+      channel 1
+    }
+  ]
+}
+DEF AREAS_GROUP Group {
+  children [
+    DEF deposit Area {
+      translation 0.61 -0.57 0.001
+      color 1 0.666667 0
+      size 0.2 0.2 0.001
+      solidName "deposit"
+    }
+    DEF swamp Area {
+      translation -0.53 0.57 0.001
+      color 0.384314 0.254902 0
+      size 0.2 0.2 0.001
+      solidName "Swamp"
+    }
+    DEF doubleScore Area {
+      translation -0.6 -0.6 0.001
+      color 0.333333 1 1
+      size 0.8 0.8 0.001
+      solidName "double_score"
+    }
+  ]
+}
+DEF OBSTACLE_GROUP Group {
+}
