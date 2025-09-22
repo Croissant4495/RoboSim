@@ -1,0 +1,3 @@
+TIME_STEP = 32
+MAP_SIZE = (2, 2)
+TILE_SIZE = 0.25
