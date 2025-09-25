@@ -86,10 +86,10 @@ class MapManager:
 
         shape = random.choice(shapes)
         color = random.choice(colors)
-        x = random.uniform(-self.map_size[0] / 2, self.map_size[0] / 2)
-        y = random.uniform(-self.map_size[1] / 2, self.map_size[1] / 2)
-        size = random.uniform(0.01, 0.08)
-        height = random.uniform(0.01, 0.08)
+        size = random.uniform(0.02, 0.06)
+        height = random.uniform(0.02, 0.06)
+        x = random.uniform((-self.map_size[0] / 2) + size , (self.map_size[0] / 2) - size)
+        y = random.uniform((-self.map_size[1] / 2) + size, (self.map_size[1] / 2) - size)
 
         obj_name = f"OBSTACLE_{random.randint(1000,9999)}"
 
