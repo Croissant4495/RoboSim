@@ -9,6 +9,8 @@ TYPE_ENCODING = {
     "gold": 3
 }
 
+BASE_COLLECTABLES = ["red", "blue", "black"]
+
 SCORING_RULES = {
     "red": 5,       # red block worth 5 points
     "blue": 10,     # blue block worth 10 points

@@ -38,3 +38,30 @@ class RobotManager:
 
     def set_last_message(self, message):
         self.last_message = message
+
+    def get_inventory_string(self):
+        """Return a string of colored blocks for inventory display."""
+        # Map item types to emoji or short labels
+        symbol_map = {
+            "black": "[B]",
+            "red": "[R]",
+            "blue": "[U]",
+            "green": "[G]"
+        }
+        return "".join(symbol_map.get(item["type"], "⬜") for item in self.collected_items)
+
+    def display_status(self, score: int, x: int, y: int):
+        """Show score and inventory as labels near top of screen."""
+        # Score label
+        self.supervisor.setLabel(
+            self.robot_id * 2,  # unique id for score
+            f"Score: {score}",
+            x, y, 0.1, 0x000000, 0.0, "Tahoma"
+        )
+
+        # Inventory label (slightly lower)
+        self.supervisor.setLabel(
+            self.robot_id * 2 + 1,  # unique id for inventory
+            self.get_inventory_string(),
+            x, y + 0.03, 0.1, 0x000000, 0.0, "Tahoma"
+        )

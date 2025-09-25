@@ -44,6 +44,10 @@ COLLECTABLE_TYPES = {
     "black": 2
 }
 
+collect_types = list(COLLECTABLE_TYPES.keys())
+collect_index = 0  # keeps track of which type to send
+
+
 def send_collect(robot_id, claimed_type):
     """Send a collect request to the referee"""
     if emitter:
@@ -87,7 +91,12 @@ while robot.step(timestep) != -1:
     # 🔹 Fake logic for testing:
     # Every 200 steps, attempt to collect a "green" box
     if step_count % 200 == 0 and collection_cooldown == 0:
-        send_collect(ROBOT_ID, COLLECTABLE_TYPES["black"])
+        collect_type = collect_types[collect_index]
+        send_collect(ROBOT_ID, COLLECTABLE_TYPES[collect_type])
+
+        # Move to next type (wrap around at the end)
+        collect_index = (collect_index + 1) % len(collect_types)
+
         collection_cooldown = 50
 
     # Every 500 steps, attempt a deposit

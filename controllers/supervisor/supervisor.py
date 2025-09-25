@@ -28,26 +28,30 @@ while SupervisorRobot.step(TIME_STEP) != -1:
     # Process incoming messages from robots
     referee.update()
 
-    # Update score display
-    SupervisorRobot.setLabel(
-        0,
-        f"Blue Score: {referee.get_score(0)}",
-        0.03, 0.03,
-        0.08,
-        0x0000FF,
-        0.0,
-        "Tahoma"
-    )
+    # # Update score display
+    # SupervisorRobot.setLabel(
+    #     0,
+    #     f"Blue Score: {referee.get_score(0)}",
+    #     0.03, 0.03,
+    #     0.08,
+    #     0x0000FF,
+    #     0.0,
+    #     "Tahoma"
+    # )
 
-    SupervisorRobot.setLabel(
-        1,
-        f"Red Score: {referee.get_score(1)}",
-        0.9, 0.03,
-        0.08,
-        0xFF0000,
-        0.0,
-        "Tahoma"
-    )
+    # SupervisorRobot.setLabel(
+    #     1,
+    #     f"Red Score: {referee.get_score(1)}",
+    #     0.9, 0.03,
+    #     0.08,
+    #     0xFF0000,
+    #     0.0,
+    #     "Tahoma"
+    # )
+    for rid in robots_manager.robots:
+        robot = robots_manager.robots[rid]
+        score = referee.get_score(robot.robot_id)
+        robot.display_status(score, 0.01 + robot.robot_id * 0.2, 0.01)
 
     if len(collectable_manager.instances) < 15:
         collectable_manager.spawn_random_collectable()

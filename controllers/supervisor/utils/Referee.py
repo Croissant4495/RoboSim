@@ -53,7 +53,7 @@ class Referee:
         # --- 4. Bonus for full set ---
         has_full_set = True
         for item in self.scoring_rules:
-            if item not in counts or counts[item] == 0:
+            if (item not in counts or counts[item] == 0) and item in BASE_COLLECTABLES:
                 has_full_set = False
                 break
 
