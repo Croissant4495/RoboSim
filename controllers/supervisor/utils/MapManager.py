@@ -21,20 +21,24 @@ class MapManager:
         for i in range(children_field.getCount()):
             node = children_field.getMFNode(i)
             translation = node.getField("translation").getSFVec3f()
-            size = node.getField("size").getSFVec3f()
             def_name = node.getDef()
-
-            # Optional classification based on DEF name
-            if "deposit" in def_name:
-                zone_type = "deposit"
-            elif "start" in def_name:
-                zone_type = "start"
-            elif "swamp" in def_name:
-                zone_type = "swamp"
-            elif "double" in def_name:
-                zone_type = "double"
+            if "trap" in def_name:
+                zone_type = "trap"
+                size = (0.1, 0.1, 0.001)
             else:
-                zone_type = "generic"
+                size = node.getField("size").getSFVec3f()
+
+                # Optional classification based on DEF name
+                if "deposit" in def_name:
+                    zone_type = "deposit"
+                elif "start" in def_name:
+                    zone_type = "start"
+                elif "swamp" in def_name:
+                    zone_type = "swamp"
+                elif "double" in def_name:
+                    zone_type = "double"                
+                else:
+                    zone_type = "generic"
 
             areas.append({
                 "center": translation,
@@ -56,14 +60,14 @@ class MapManager:
         """Return list of areas that contain pos."""
         return [a for a in self.areas if self.is_in_area(pos, a)]
 
-    def is_restricted(self, pos, min_clearance=0.05):
+    def is_restricted(self, pos, min_clearance=0.08):
         """
         Check if position is restricted.
         Restricted = inside a deposit area OR overlapping with an obstacle.
         min_clearance controls how close we allow to obstacles (default 5cm).
         """
         # 1) Area restriction
-        if any(a for a in self.get_areas_at(pos) if a["type"] == "deposit"):
+        if any(a for a in self.get_areas_at(pos) if a["type"] in ("deposit", "trap")):
             return True
 
         # 2) Obstacle restriction
@@ -75,21 +79,28 @@ class MapManager:
 
         return False
     
-    def spawn_random_obstacle(self):
+    def spawn_random_obstacle(self, max_attempts=50):
         shapes = ["box", "cylinder", "cone"]
         colors = [
             (1, 0, 0),   # red
             (0, 1, 0),   # green
             (0, 0, 1),   # blue
-            (0.5, 0.5, 0.5)  # gray
+            (0.5, 0.5, 0.5),  # gray,
+            (0.6667, 0.6667, 0.5)
         ]
 
         shape = random.choice(shapes)
-        color = random.choice(colors)
-        size = random.uniform(0.02, 0.06)
-        height = random.uniform(0.02, 0.06)
-        x = random.uniform((-self.map_size[0] / 2) + size , (self.map_size[0] / 2) - size)
-        y = random.uniform((-self.map_size[1] / 2) + size, (self.map_size[1] / 2) - size)
+        color = colors[-1]
+        size = random.uniform(0.02, 0.05)
+        height = random.uniform(0.02, 0.05)
+
+        for _ in range(max_attempts):
+            x = random.uniform((-self.map_size[0] / 2) + size , (self.map_size[0] / 2) - size)
+            y = random.uniform((-self.map_size[1] / 2) + size, (self.map_size[1] / 2) - size)
+
+            if not self.is_restricted((x, y)):
+                break
+        
 
         obj_name = f"OBSTACLE_{random.randint(1000,9999)}"
 

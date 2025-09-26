@@ -1,0 +1,42 @@
+#VRML_SIM R2023b utf8
+PROTO Trap [
+  field SFVec3f translation 0 0 0.001    # Position of trap
+  field SFFloat outerRadius 0.1          # Outer yellow radius
+  field SFFloat innerRadius 0.06         # Inner blue radius
+  field SFString solidName ""            # Optional name
+]
+{
+  Solid {
+    translation IS translation
+    name IS solidName
+    children [
+      # Outer circle (yellow indicator)
+      Shape {
+        appearance PBRAppearance {
+          baseColor 1 1 0     # yellow
+          roughness 1
+          metalness 0
+        }
+        geometry Cylinder {
+          radius IS outerRadius
+          height 0.001
+        }
+      }
+
+      # Inner circle (blue trap zone)
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0 0 1     # blue
+          roughness 1
+          metalness 0
+        }
+        geometry Cylinder {
+          radius IS innerRadius
+          height 0.0012
+        }
+      }
+    ]
+    boundingObject NULL
+    physics NULL
+  }
+}

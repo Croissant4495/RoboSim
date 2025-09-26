@@ -13,14 +13,29 @@ class Referee:
         self.scores = {rid: 0 for rid in robots_manager.robots}
 
     def update(self):
-        """Process robot messages and apply game logic"""
+        self.process_messages()
+        self.check_traps()
+
+    def process_messages(self):
+        """Process robot messages like deposit/collect"""
         messages = self.robots_manager.process_messages()
         for robot_id, msg_type, data in messages:
             if msg_type == 1:  # deposit
                 gained = self.handle_deposit(robot_id)
                 print(f"Robot {robot_id} deposited, gained {gained}, total {self.scores[robot_id]}")
-            elif msg_type == 2: # collect
+            elif msg_type == 2:  # collect
                 self.handle_collect(robot_id, data)
+
+    def check_traps(self):
+        """Check if any robot is inside a trap and apply penalty"""
+        for rid, robot in self.robots_manager.robots.items():
+            pos = robot.get_position()
+            areas = self.map_manager.get_areas_at(pos)
+            if any(a["type"] == "trap" for a in areas):
+                if robot.get_inventory_counts():  # only act if carrying something
+                    print(f"⚠️ Robot {rid} fell into a trap! Inventory cleared.")
+                    robot.clear_inventory()
+
 
     def get_score(self, robot_id):
         return self.scores.get(robot_id, 0)

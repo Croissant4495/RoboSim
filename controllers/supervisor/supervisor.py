@@ -16,7 +16,7 @@ referee = Referee(SupervisorRobot, robots_manager, map_manager, collectable_mana
 
 i = 0
 # Spawn initial obstacles and collectables
-for _ in range(5):
+for _ in range(7):
     map_manager.spawn_random_obstacle()
 
 for _ in range(15):
@@ -27,27 +27,7 @@ scores = [0, 0]
 while SupervisorRobot.step(TIME_STEP) != -1:
     # Process incoming messages from robots
     referee.update()
-
-    # # Update score display
-    # SupervisorRobot.setLabel(
-    #     0,
-    #     f"Blue Score: {referee.get_score(0)}",
-    #     0.03, 0.03,
-    #     0.08,
-    #     0x0000FF,
-    #     0.0,
-    #     "Tahoma"
-    # )
-
-    # SupervisorRobot.setLabel(
-    #     1,
-    #     f"Red Score: {referee.get_score(1)}",
-    #     0.9, 0.03,
-    #     0.08,
-    #     0xFF0000,
-    #     0.0,
-    #     "Tahoma"
-    # )
+    
     for rid in robots_manager.robots:
         robot = robots_manager.robots[rid]
         score = referee.get_score(robot.robot_id)

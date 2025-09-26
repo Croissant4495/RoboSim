@@ -6,11 +6,12 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 IMPORTABLE EXTERNPROTO "../protos/Collectable.proto"
 IMPORTABLE EXTERNPROTO "../protos/Area.proto"
+IMPORTABLE EXTERNPROTO "../protos/Trap.proto"
 
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.4070666895316676 -0.4033813683778521 0.8194999584620737 4.5057275512920665
+  orientation -0.4070673498686804 -0.4033823131037204 0.819499165433365 4.505727141780786
   position -0.27064420721275406 2.595217340790795 3.4307178549623623
 }
 TexturedBackground {
@@ -64,6 +65,9 @@ DEF puck2 Robot {
 }
 DEF AREAS_GROUP Group {
   children [
+    DEF trap Trap {
+      translation 0.253693 0.286897 0.001
+    }
     DEF deposit Area {
       translation 0.61 -0.57 0.001
       color 1 0.666667 0

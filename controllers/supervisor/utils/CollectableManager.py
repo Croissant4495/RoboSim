@@ -76,7 +76,7 @@ class CollectableManager:
     def spawn_random_collectable(self, preset=None, min_distance=0.1, max_attempts=50):
         """Spawn a collectable randomly inside map with given preset (or random preset)."""
         if preset is None:
-            preset = random.choice(list(COLLECTABLE_PRESETS.keys()))
+            preset = random.choice(BASE_COLLECTABLES)
 
         size = COLLECTABLE_PRESETS[preset]["size"]
         half_w, half_h = self.map_manager.map_size[0] / 2, self.map_manager.map_size[1] / 2

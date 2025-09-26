@@ -21,19 +21,19 @@ SCORING_RULES = {
 COLLECTABLE_PRESETS = {
             "red": {
                 "color": (1, 0, 0),
-                "size": 0.08,
+                "size": 0.06,
             },
             "blue": {
                 "color": (0, 0, 1),
-                "size": 0.06,
+                "size": 0.045,
             },
             "black": {
                 "color": (0, 0, 0),
-                "size": 0.04,
+                "size": 0.03,
             },
             "gold": {
                 "color": (1, 0.84, 0),  # shiny yellow
-                "size": 0.07,
+                "size": 0.05,
             }
         }
 
