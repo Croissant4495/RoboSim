@@ -50,18 +50,24 @@ class RobotManager:
         }
         return "".join(symbol_map.get(item["type"], "⬜") for item in self.collected_items)
 
-    def display_status(self, score: int, x: int, y: int):
+    def display_status(self, score):
         """Show score and inventory as labels near top of screen."""
-        # Score label
+        if self.robot_id == 0:
+            x, y = 0.03, 0.03
+            color = 0x0000FF
+        else:
+            x, y = 0.9, 0.03
+            color = 0xFF0000
+
         self.supervisor.setLabel(
             self.robot_id * 2,  # unique id for score
             f"Score: {score}",
-            x, y, 0.1, 0x000000, 0.0, "Tahoma"
+            x, y, 0.1, color, 0.0, "Tahoma"
         )
 
         # Inventory label (slightly lower)
         self.supervisor.setLabel(
             self.robot_id * 2 + 1,  # unique id for inventory
             self.get_inventory_string(),
-            x, y + 0.03, 0.1, 0x000000, 0.0, "Tahoma"
+            x, y + 0.05, 0.08, color, 0.0, "Tahoma"
         )

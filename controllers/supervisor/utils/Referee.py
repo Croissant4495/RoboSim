@@ -111,7 +111,7 @@ class Referee:
         pos = robot.get_position()
         obj_name = self.collectable_manager.get_nearby_object(pos)
 
-        if not obj_name:
+        if not obj_name or not robot.can_carry():
             return False, None
 
         actual_type = self.collectable_manager.instances[obj_name]["type"]

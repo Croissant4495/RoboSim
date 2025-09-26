@@ -51,7 +51,7 @@ while SupervisorRobot.step(TIME_STEP) != -1:
     for rid in robots_manager.robots:
         robot = robots_manager.robots[rid]
         score = referee.get_score(robot.robot_id)
-        robot.display_status(score, 0.01 + robot.robot_id * 0.2, 0.01)
+        robot.display_status(score)
 
     if len(collectable_manager.instances) < 15:
         collectable_manager.spawn_random_collectable()
