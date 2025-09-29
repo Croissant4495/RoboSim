@@ -51,3 +51,8 @@ class RobotsManager:
         if robot_id in self.robots:
             return self.robots[robot_id].get_position()
         return None
+    
+    def get_robot_color(self, robot_id):
+        if robot_id in self.robots:
+            return self.robots[robot_id].get_color_readings()
+        return None

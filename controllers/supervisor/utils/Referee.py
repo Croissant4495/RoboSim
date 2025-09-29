@@ -40,7 +40,7 @@ class Referee:
     def get_score(self, robot_id):
         return self.scores.get(robot_id, 0)
     
-    def handle_deposit(self, robot_id):
+    def validate_deposit(self, robot_id):
         robot = self.robots_manager.robots[robot_id]
         pos = robot.get_position()
         areas = self.map_manager.get_areas_at(pos)
@@ -51,46 +51,54 @@ class Referee:
             if area["type"] == "deposit":
                 in_deposit = True
                 break
-
-        if not in_deposit:
-            print(f"Robot {robot_id} tried to deposit outside deposit zone!")
+        
+        # Ensure robot sees deposit with both color sensors
+        color1, color2 = robot.get_color_readings()
+        sees_deposit = (color1 == "deposit" and color2 == "deposit")
+        
+        if not in_deposit or not sees_deposit:
+            print(f"Robot {robot_id} failed to deposit!")
             return 0
+        
+    
+    def handle_deposit(self, robot_id):
+        robot = self.robots_manager.robots[robot_id]
+        pos = robot.get_position()
 
-        # --- 2. Get robot inventory ---
-        counts = robot.get_inventory_counts()
-        gained = 0
+        if self.validate_deposit():
+            # --- 2. Get robot inventory ---
+            counts = robot.get_inventory_counts()
+            gained = 0
 
-        # --- 3. Base scoring ---
-        for item, count in counts.items():
-            item_score = self.scoring_rules.get(item, 0)
-            gained += item_score * count
+            # --- 3. Base scoring ---
+            for item, count in counts.items():
+                item_score = self.scoring_rules.get(item, 0)
+                gained += item_score * count
 
-        # --- 4. Bonus for full set ---
-        has_full_set = True
-        for item in self.scoring_rules:
-            if (item not in counts or counts[item] == 0) and item in BASE_COLLECTABLES:
-                has_full_set = False
-                break
+            # --- 4. Bonus for full set and double set ---
+            double_set = True
+            for item in BASE_COLLECTABLES:
+                if counts[item] != 2:
+                    double_set = False
+                    break
 
-        if has_full_set:
-            gained += self.set_bonus
+            if not double_set:
+                full_set = True
+                for item in self.scoring_rules:
+                    if (item not in counts or counts[item] == 0) and item in BASE_COLLECTABLES:
+                        full_set = False
+                        break
 
-        # --- 5. Double zone check ---
-        in_double = False
-        for area in areas:
-            if area["type"] == "double":
-                in_double = True
-                break
+            if double_set:
+                gained += (self.set_bonus * 2)
+            elif full_set:
+                gained += self.set_bonus
 
-        if in_double:
-            gained *= 2
-            print(f"Robot {robot_id} deposited in double zone, score doubled!")
+            # --- 6. Update score and reset inventory ---
+            self.scores[robot_id] += gained
+            robot.clear_inventory()
 
-        # --- 6. Update score and reset inventory ---
-        self.scores[robot_id] += gained
-        robot.clear_inventory()
-
-        return gained
+            return gained
     
     def handle_collect(self, robot_id, claimed_type_id):
         """Robot requests to collect an item of claimed type"""

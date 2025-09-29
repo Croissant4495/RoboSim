@@ -71,3 +71,47 @@ class RobotManager:
             self.get_inventory_string(),
             x, y + 0.05, 0.08, color, 0.0, "Tahoma"
         )
+
+    def classify_color(rgb):
+            r, g, b = rgb
+            # Very basic threshold logic, you can refine this
+            if r > 200 and g > 200 and b < 100:
+                return "deposit"   # yellow deposit tile
+            elif r < 50 and g < 50 and b < 50:
+                return "black"
+            elif r > 150 and g < 80 and b < 80:
+                return "red"
+            elif g > 150 and r < 80 and b < 80:
+                return "green"
+            elif b > 150 and r < 80 and g < 80:
+                return "blue"
+            else:
+                return "unknown"
+    
+    def get_color_readings(self):
+        """
+        Returns (left_color, right_color) as strings.
+        Possible values: 'deposit', 'black', 'red', 'green', etc.
+        """
+        left_color = "unknown"
+        right_color = "unknown"
+
+        if self.left_sensor:
+            image = self.left_sensor.getImage()
+            rgb = (
+                self.left_sensor.imageGetRed(image, 1, 0, 0),
+                self.left_sensor.imageGetGreen(image, 1, 0, 0),
+                self.left_sensor.imageGetBlue(image, 1, 0, 0),
+            )
+            left_color = self.classify_color(rgb)
+
+        if self.right_sensor:
+            image = self.right_sensor.getImage()
+            rgb = (
+                self.right_sensor.imageGetRed(image, 1, 0, 0),
+                self.right_sensor.imageGetGreen(image, 1, 0, 0),
+                self.right_sensor.imageGetBlue(image, 1, 0, 0),
+            )
+            right_color = self.classify_color(rgb)
+
+        return left_color, right_color
