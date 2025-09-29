@@ -14,11 +14,15 @@ class Referee:
         self.sim_time = 0
         self.deposit_states = {rid: {"in_progress": False, "start_time": None, "start_pos": None}
                                for rid in robots_manager.robots}
+        
+        self.collect_states = {rid: {"in_progress": False, "start_time": None, "start_pos": None, "claimed_type": None}
+                                for rid in robots_manager.robots}
 
     def update(self):
         self.process_messages()
         self.check_traps()
         self.check_deposits()
+        self.check_collects()
         self.sim_time += TIME_STEP
 
     def process_messages(self):
@@ -28,7 +32,7 @@ class Referee:
             if msg_type == 1:  # deposit
                 self.start_deposit(robot_id)
             elif msg_type == 2:  # collect
-                self.handle_collect(robot_id, data)
+                self.start_collect(robot_id, data)
 
     def check_traps(self):
         """Check if any robot is inside a trap and apply penalty"""
@@ -130,7 +134,7 @@ class Referee:
             dy = abs(pos[1] - state["start_pos"][1])
             still = dx < 0.01 and dy < 0.01  # tolerance ~1 cm
 
-            if elapsed >= 3000:  # 3 seconds in ms
+            if elapsed >= DEPOSIT_TIME * 1000:  # 3 seconds in ms
                 if still:
                     gained = self.handle_deposit(rid)
                     print(f"✅ Robot {rid} deposit confirmed, +{gained}")
@@ -140,6 +144,25 @@ class Referee:
     
 
     # ____________ COLLECTING ____________
+
+    def start_collect(self, robot_id, claimed_type_id):
+        robot = self.robots_manager.robots[robot_id]
+        pos = robot.get_position()
+
+        # Make sure there is actually something nearby
+        obj_name = self.collectable_manager.get_nearby_object(pos)
+        if not obj_name:
+            print(f"❌ Robot {robot_id} tried to collect but nothing nearby")
+            return
+
+        self.collect_states[robot_id] = {
+            "in_progress": True,
+            "start_time": self.sim_time,
+            "start_pos": pos,
+            "claimed_type": claimed_type_id
+        }
+
+        print(f"⏳ Robot {robot_id} started collect attempt...")
 
     def handle_collect(self, robot_id, claimed_type_id):
         """Robot requests to collect an item of claimed type"""
@@ -186,3 +209,27 @@ class Referee:
             return True, actual_type
 
         return False, actual_type
+    
+    def check_collects(self):
+        for rid, state in self.collect_states.items():
+            if not state["in_progress"]:
+                continue
+
+            elapsed = self.sim_time - state["start_time"]
+            robot = self.robots_manager.robots[rid]
+            pos = robot.get_position()
+
+            dx = abs(pos[0] - state["start_pos"][0])
+            dy = abs(pos[1] - state["start_pos"][1])
+            still = dx < 0.01 and dy < 0.01  # ~1cm tolerance
+
+            if elapsed >= COLLECT_TIME * 1000:  # ✅ only 1s required
+                if still:
+                    success = self.handle_collect(rid, state["claimed_type"])
+                    if success:
+                        print(f"✅ Robot {rid} collect confirmed")
+                else:
+                    print(f"❌ Robot {rid} moved during collect → cancelled")
+
+                # reset attempt
+                state["in_progress"] = False
