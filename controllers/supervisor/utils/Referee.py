@@ -11,18 +11,22 @@ class Referee:
         self.scoring_rules = SCORING_RULES
         self.set_bonus = set_bonus
         self.scores = {rid: 0 for rid in robots_manager.robots}
+        self.sim_time = 0
+        self.deposit_states = {rid: {"in_progress": False, "start_time": None, "start_pos": None}
+                               for rid in robots_manager.robots}
 
     def update(self):
         self.process_messages()
         self.check_traps()
+        self.check_deposits()
+        self.sim_time += TIME_STEP
 
     def process_messages(self):
         """Process robot messages like deposit/collect"""
         messages = self.robots_manager.process_messages()
         for robot_id, msg_type, data in messages:
             if msg_type == 1:  # deposit
-                gained = self.handle_deposit(robot_id)
-                print(f"Robot {robot_id} deposited, gained {gained}, total {self.scores[robot_id]}")
+                self.start_deposit(robot_id)
             elif msg_type == 2:  # collect
                 self.handle_collect(robot_id, data)
 
@@ -40,6 +44,20 @@ class Referee:
     def get_score(self, robot_id):
         return self.scores.get(robot_id, 0)
     
+    # ____________ DEPOSITING ____________
+    
+    def start_deposit(self, robot_id):
+        robot = self.robots_manager.robots[robot_id]
+        pos = robot.get_position()
+        if not self.validate_deposit(robot_id):
+            return
+
+        self.deposit_states[robot_id]["in_progress"] = True
+        self.deposit_states[robot_id]["start_time"] = self.sim_time
+        self.deposit_states[robot_id]["start_pos"] = pos
+
+        print(f"⏳ Robot {robot_id} started deposit attempt...")
+    
     def validate_deposit(self, robot_id):
         robot = self.robots_manager.robots[robot_id]
         pos = robot.get_position()
@@ -55,27 +73,26 @@ class Referee:
         # Ensure robot sees deposit with both color sensors
         color1, color2 = robot.get_color_readings()
         sees_deposit = (color1 == "deposit" and color2 == "deposit")
-        
         if not in_deposit or not sees_deposit:
             print(f"Robot {robot_id} failed to deposit!")
-            return 0
+            return False
+        return True
         
     
     def handle_deposit(self, robot_id):
         robot = self.robots_manager.robots[robot_id]
-        pos = robot.get_position()
 
-        if self.validate_deposit():
-            # --- 2. Get robot inventory ---
+        if self.validate_deposit(robot_id):
+            # --- Get robot inventory ---
             counts = robot.get_inventory_counts()
             gained = 0
 
-            # --- 3. Base scoring ---
+            # --- Base scoring ---
             for item, count in counts.items():
                 item_score = self.scoring_rules.get(item, 0)
                 gained += item_score * count
 
-            # --- 4. Bonus for full set and double set ---
+            # --- Bonus for full set and double set ---
             double_set = True
             for item in BASE_COLLECTABLES:
                 if counts[item] != 2:
@@ -94,12 +111,36 @@ class Referee:
             elif full_set:
                 gained += self.set_bonus
 
-            # --- 6. Update score and reset inventory ---
+            # --- Update score and reset inventory ---
             self.scores[robot_id] += gained
             robot.clear_inventory()
 
             return gained
+        
+    def check_deposits(self):
+        for rid, state in self.deposit_states.items():
+            if not state["in_progress"]:
+                continue
+
+            elapsed = self.sim_time - state["start_time"]
+            robot = self.robots_manager.robots[rid]
+            pos = robot.get_position()
+
+            dx = abs(pos[0] - state["start_pos"][0])
+            dy = abs(pos[1] - state["start_pos"][1])
+            still = dx < 0.01 and dy < 0.01  # tolerance ~1 cm
+
+            if elapsed >= 3000:  # 3 seconds in ms
+                if still:
+                    gained = self.handle_deposit(rid)
+                    print(f"✅ Robot {rid} deposit confirmed, +{gained}")
+                else:
+                    print(f"❌ Robot {rid} moved during deposit → cancelled")
+                state["in_progress"] = False
     
+
+    # ____________ COLLECTING ____________
+
     def handle_collect(self, robot_id, claimed_type_id):
         """Robot requests to collect an item of claimed type"""
         success, actual_type = self.validate_collect(robot_id, claimed_type_id)

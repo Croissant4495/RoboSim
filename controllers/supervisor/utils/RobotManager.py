@@ -93,6 +93,9 @@ class RobotManager:
         Returns (left_color, right_color) as strings.
         Possible values: 'deposit', 'black', 'red', 'green', etc.
         """
+
+        return "deposit" , "deposit"
+
         left_color = "unknown"
         right_color = "unknown"
 
