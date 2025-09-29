@@ -19,10 +19,10 @@ COLLECTABLE_TYPES = {
 }
 
 class CustomBot:
-    def __init__(self, robot, ROBOT_ID):
-        self.robot = robot
+    def __init__(self, ROBOT_ID):
+        self.robot = Robot()
         self.robot_id = ROBOT_ID
-        self.timestep = int(robot.getBasicTimeStep())
+        self.timestep = int(self.robot.getBasicTimeStep())
 
 
         self.emitter = self.robot.getDevice("emitter")
@@ -112,6 +112,9 @@ class CustomBot:
         while counter < (seconds / self.timestep):
             self.robot.step(self.timestep)
             counter += 1
+
+    def run_sim(self):
+        return self.robot.step(self.timestep)
 
     
     
