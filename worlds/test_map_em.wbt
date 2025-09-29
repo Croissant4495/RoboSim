@@ -11,7 +11,7 @@ IMPORTABLE EXTERNPROTO "../protos/Trap.proto"
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.4070673498686804 -0.4033823131037204 0.819499165433365 4.505727141780786
+  orientation -0.4070675899667694 -0.40338255103026677 0.8194989290554079 4.505726859477624
   position -0.27064420721275406 2.595217340790795 3.4307178549623623
 }
 TexturedBackground {
@@ -19,7 +19,7 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 RectangleArena {
-  floorSize 1.5 1.5
+  floorSize 1.25 1.25
   floorTileSize 0.25 0.25
   floorAppearance PBRAppearance {
     baseColor 0.9 0.9 0.9
@@ -68,8 +68,11 @@ DEF AREAS_GROUP Group {
     DEF trap Trap {
       translation 0.253693 0.286897 0.001
     }
+    DEF trap2 Trap {
+      translation -0.166307 -0.303103 0.001
+    }
     DEF deposit Area {
-      translation 0.61 -0.57 0.001
+      translation 0.49 -0.42 0.001
       color 1 0.666667 0
       size 0.2 0.2 0.001
       solidName "deposit"
@@ -81,9 +84,9 @@ DEF AREAS_GROUP Group {
       solidName "Swamp"
     }
     DEF doubleScore Area {
-      translation -0.45 -0.5 0.001
+      translation -0.48 -0.48 0.001
       color 0.333333 1 1
-      size 0.6 0.6 0.001
+      size 0.3 0.3 0.001
       solidName "double_score"
     }
   ]
