@@ -1,40 +1,47 @@
-from controller import Robot
-import struct
+from CustomBot import *
 
 # Create the Robot instance
-robot = Robot()
+ROBOT_ID = 0  # 0 = blue, 1 = red
+robot = CustomBot(ROBOT_ID)
 
-# Get the simulation timestep
-timestep = int(robot.getBasicTimeStep())
+collect_types = ["red", "blue", "black"]
+collect_index = 0  # keeps track of which type to send
 
-# Initialize motors
-left_motor = robot.getDevice('wheel1 motor')
-right_motor = robot.getDevice('wheel2 motor')
-left_motor.setPosition(float('inf'))  # velocity control mode
-right_motor.setPosition(float('inf'))
-left_motor.setVelocity(0.0)
-right_motor.setVelocity(0.0)
-
-# Initialize emitter
-emitter = robot.getDevice('emitter')
-if emitter is None:
-    print("Warning: No emitter device found")
-
-camera = robot.getDevice('camera1')
-camera.enable(timestep)
-camera2 = robot.getDevice('camera2')
-camera2.enable(timestep)
-
-led = robot.getDevice('led9')
-# Example simple movement + fake collection
+# Simple test loop
 step_count = 0
 collection_cooldown = 0
-led_status = True
 
-while robot.step(timestep) != -1:
+while robot.run_sim() != -1:
     step_count += 1
 
-    if step_count % 100 == 0:
-        led_status = not led_status
-        print(f"LED STATUS: {led_status}")
-        led.set(led_status)
+    # --- Simple obstacle avoidance using distance sensors ---
+    distances = robot.read_distances()
+    left_obstacle = distances["left"] > 80.0
+    right_obstacle = distances["right"] > 80.0
+
+    left_speed, right_speed = MAX_SPEED, MAX_SPEED
+    if left_obstacle:
+        left_speed, right_speed = MAX_SPEED, -MAX_SPEED / 2
+    elif right_obstacle:
+        left_speed, right_speed = -MAX_SPEED / 2, MAX_SPEED
+
+    robot.set_speed(left_speed, right_speed)
+
+    # --- Collect cooldown ---
+    if collection_cooldown > 0:
+        collection_cooldown -= 1
+
+    # 🔹 Fake logic for testing
+    # Every 200 steps, send COLLECT message
+    if step_count % 200 == 0 and collection_cooldown == 0:
+        collect_type = collect_types[collect_index]
+        robot.send_message(MSG_COLLECT, COLLECTABLE_TYPES[collect_type])
+        print(f"Robot {ROBOT_ID} sent COLLECT request for type {collect_type}")
+
+        collect_index = (collect_index + 1) % len(collect_types)
+        collection_cooldown = 50
+
+    # Every 500 steps, send DEPOSIT message
+    if step_count % 500 == 0:
+        robot.send_message(MSG_DEPOSIT, 0)
+        print(f"Robot {ROBOT_ID} sent DEPOSIT request")

@@ -76,7 +76,7 @@ DEF puck custom_robot {
 DEF puck2 custom_robot {
   translation 0.21 0 0
   name "Red"
-  controller "Test"
+  controller "<none>"
 }
 DEF OBSTACLE_GROUP Group {
 }

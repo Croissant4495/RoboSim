@@ -8,7 +8,7 @@ orthographicViewHeight: 1
 textFiles: -1
 globalOptionalRendering: DistanceSensorRays
 consoles: Console:All:All
-renderingDevicePerspectives: Blue:camera1;1;32;0;0
-renderingDevicePerspectives: Blue:camera2;1;32;0;0
+renderingDevicePerspectives: Blue:camera1;1;32;0.0459547;0.133224
+renderingDevicePerspectives: Blue:camera2;1;32;0.0142395;0.143092
 renderingDevicePerspectives: Red:camera1;1;32;0;0
 renderingDevicePerspectives: Red:camera2;1;32;0;0
