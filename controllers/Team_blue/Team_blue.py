@@ -1,4 +1,4 @@
-from CustomBot import *
+from ..CustomBot import *
 
 # Create the Robot instance
 ROBOT_ID = 0  # 0 = blue, 1 = red

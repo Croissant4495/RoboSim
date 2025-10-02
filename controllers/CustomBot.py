@@ -24,7 +24,6 @@ class CustomBot:
         self.robot_id = ROBOT_ID
         self.timestep = int(self.robot.getBasicTimeStep())
 
-
         self.emitter = self.robot.getDevice("emitter")
         self.receiver = self.robot.getDevice("receiver")
         self.receiver.enable(self.timestep)
@@ -46,6 +45,8 @@ class CustomBot:
 
         self.status_led = self.robot.getDevice("status led")
         self.led_state = 0
+
+        #TODO Add 2 Color Sensors in the robot with their functions
 
         self.left_motor = self.robot.getDevice("left wheel motor")
         self.right_motor = self.robot.getDevice("right wheel motor")
@@ -104,8 +105,7 @@ class CustomBot:
         self.send_message(MSG_TIMER, 0)
         while True:
             time = self.receive_message()
-            if time:
-                return time
+            return time if time else None
 
     def wait(self, seconds):
         counter = 0

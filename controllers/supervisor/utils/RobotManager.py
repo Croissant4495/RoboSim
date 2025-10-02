@@ -88,6 +88,7 @@ class RobotManager:
             else:
                 return "unknown"
     
+    #TODO Actual implementation 
     def get_color_readings(self):
         """
         Returns (left_color, right_color) as strings.
