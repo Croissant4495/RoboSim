@@ -3,7 +3,6 @@
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 IMPORTABLE EXTERNPROTO "../protos/Collectable.proto"
 IMPORTABLE EXTERNPROTO "../protos/Area.proto"
 IMPORTABLE EXTERNPROTO "../protos/Trap.proto"
@@ -12,8 +11,9 @@ EXTERNPROTO "../protos/custom_robot.proto"
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.40706753472572355 0.4033827231361362 -0.8194988717793313 1.777457951612224
-  position -0.13410392409272792 1.707449284528797 2.241820347899814
+  orientation 0.407067868975663 0.40338318244049487 -0.8194984796641119 1.7774582151782532
+  position -0.13410392409272792 1.707449284528797 2.2418203478998135
+  follow "trap1"
 }
 TexturedBackground {
 }
@@ -38,39 +38,15 @@ Robot {
   controller "supervisor"
   supervisor TRUE
 }
-DEF puck Robot {
-  children [
-    E-puck {
-      rotation 0 0 1 1.5708
-      controller "Team_blue"
-      version "2"
-    }
-    Emitter {
-      channel 1
-    }
-  ]
-  name "puck_blue"
-}
-DEF puck2 Robot {
-  translation 0.32 0 0
-  children [
-    E-puck {
-      rotation 0 0 1 1.5708
-      controller "Team_red"
-    }
-    Emitter {
-      channel 1
-    }
-  ]
-  name "puck_red"
-}
 DEF AREAS_GROUP Group {
   children [
     DEF trap Trap {
       translation 0.253693 0.286897 0.001
+      solidName "trap1"
     }
     DEF trap2 Trap {
       translation -0.166307 -0.303103 0.001
+      solidName "trap2"
     }
     DEF deposit Area {
       translation 0.49 -0.42 0.001
@@ -92,9 +68,14 @@ DEF AREAS_GROUP Group {
     }
   ]
 }
-custom_robot {
-  translation 0.00317366 0.158675 0.02
-  rotation 1 0 0 1.5708
+DEF puck custom_robot {
+  translation 0 0.1 0
+  name "Blue"
+  controller "Test"
+}
+DEF puck2 custom_robot {
+  translation 0.21 0 0
+  name "Red"
   controller "Test"
 }
 DEF OBSTACLE_GROUP Group {

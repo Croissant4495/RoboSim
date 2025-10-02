@@ -11,7 +11,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/50c3f419b5da49
 
 PROTO custom_robot [
     field SFVec3f            translation                  0 0 0                    # Is `Transform.translation`.
-    field SFRotation         rotation                     0 1 0 0                  # Is `Transform.rotation`.
+    field SFRotation         rotation                     1 0 0 1.5708                  # Is `Transform.rotation`.
     field SFString           name                         "Erebus_Bot"                 # Is `Solid.name`.
     field SFInt32            emitter_channel              1
     field SFInt32            receiver_channel             1
@@ -100,24 +100,24 @@ Robot {
             ]
         }
         DEF EPUCK_FRONT_LED LED {
-            translation 0.0125 0.0285 -0.031
+            translation -0.022 0.043 0.02
             children [
                 Shape {
                 appearance PBRAppearance {
-                    baseColor 0.8 0.8 0.8
-                    transparency 0.3
-                    roughness 0.2
-                    metalness 0.5
+                    baseColor 0 0 0
+                    transparency 0
+                    roughness 1
+                    metalness 0
                 }
                 geometry Sphere {
-                    radius 0.0025
+                    radius 0.005
                 }
                 castShadows FALSE
                 }
             ]
             name "led9"
             color [
-                1 0.3 0
+                1 1 1
             ]
         }
         DEF EPUCK_SMALL_LOGO Transform {
@@ -593,9 +593,11 @@ Robot {
             DistanceSensor {
             name "frontd"
             lookupTable [
-                0 0 0
-                0.8 0.8 0
+                0.005 1023 0,       # At 0.5cm or less, sensor is maxed out
+                0.2 0 0,            # At 20cm, sensor reads 0
+                0.21 0 0            # Beyond 20cm, sensor remains 0
             ]
+
             type "infra-red"
             rotation 1 0 0 1.56826
             physics Physics {
@@ -614,8 +616,9 @@ Robot {
             DistanceSensor {
             name "backd"
             lookupTable [
-                0 0 0
-                0.8 0.8 0
+                0.005 1023 0,       # At 0.5cm or less, sensor is maxed out
+                0.2 0 0,            # At 20cm, sensor reads 0
+                0.21 0 0            # Beyond 20cm, sensor remains 0
             ]
             type "infra-red"
             rotation 1 0 0 1.56826
@@ -635,8 +638,9 @@ Robot {
             DistanceSensor {
             name "rightd"
             lookupTable [
-                0 0 0
-                0.8 0.8 0
+                0.005 1023 0,       # At 0.5cm or less, sensor is maxed out
+                0.2 0 0,            # At 20cm, sensor reads 0
+                0.21 0 0            # Beyond 20cm, sensor remains 0
             ]
             type "infra-red"
             rotation 1 0 0 1.56826
@@ -656,8 +660,9 @@ Robot {
             DistanceSensor {
             name "leftd"
             lookupTable [
-                0 0 0
-                0.8 0.8 0
+                0.005 1023 0,       # At 0.5cm or less, sensor is maxed out
+                0.2 0 0,            # At 20cm, sensor reads 0
+                0.21 0 0            # Beyond 20cm, sensor remains 0
             ]
             type "infra-red"
             rotation 1 0 0 1.56826

@@ -20,6 +20,11 @@ emitter = robot.getDevice('emitter')
 if emitter is None:
     print("Warning: No emitter device found")
 
+camera = robot.getDevice('camera1')
+camera.enable(timestep)
+camera2 = robot.getDevice('camera2')
+camera2.enable(timestep)
+
 led = robot.getDevice('led9')
 # Example simple movement + fake collection
 step_count = 0
