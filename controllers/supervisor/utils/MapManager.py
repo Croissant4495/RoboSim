@@ -92,7 +92,7 @@ class MapManager:
         shape = random.choice(shapes)
         color = colors[-1]
         size = random.uniform(0.02, 0.03)
-        height = random.uniform(0.075, 0.085)
+        height = random.uniform(0.1, 0.125)
 
         for _ in range(max_attempts):
             x = random.uniform((-self.map_size[0] / 2) + size , (self.map_size[0] / 2) - size)
