@@ -7,11 +7,12 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 IMPORTABLE EXTERNPROTO "../protos/Collectable.proto"
 IMPORTABLE EXTERNPROTO "../protos/Area.proto"
 IMPORTABLE EXTERNPROTO "../protos/Trap.proto"
+EXTERNPROTO "../protos/custom_robot.proto"
 
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.4070675899667694 -0.40338255103026677 0.8194989290554079 4.505726859477624
+  orientation 0.40706753472572355 0.4033827231361362 -0.8194988717793313 1.777457951612224
   position -0.13410392409272792 1.707449284528797 2.241820347899814
 }
 TexturedBackground {
@@ -90,6 +91,11 @@ DEF AREAS_GROUP Group {
       solidName "double_score"
     }
   ]
+}
+custom_robot {
+  translation 0.00317366 0.158675 0.02
+  rotation 1 0 0 1.5708
+  controller "Test"
 }
 DEF OBSTACLE_GROUP Group {
 }
