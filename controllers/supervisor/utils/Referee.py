@@ -99,14 +99,14 @@ class Referee:
             # --- Bonus for full set and double set ---
             double_set = True
             for item in BASE_COLLECTABLES:
-                if counts[item] != 2:
+                if counts.get(item, 0) != 2:  # Use .get() with default 0
                     double_set = False
                     break
 
             if not double_set:
                 full_set = True
-                for item in self.scoring_rules:
-                    if (item not in counts or counts[item] == 0) and item in BASE_COLLECTABLES:
+                for item in BASE_COLLECTABLES:
+                    if counts.get(item, 0) == 0:  # Use .get() with default 0
                         full_set = False
                         break
 
