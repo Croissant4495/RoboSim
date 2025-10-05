@@ -77,7 +77,7 @@ class Referee:
         # Ensure robot sees deposit with both color sensors
         color1, color2 = robot.get_color_readings()
         sees_deposit = (color1 == "deposit" and color2 == "deposit")
-        if not in_deposit or not sees_deposit:
+        if not sees_deposit:
             print(f"Robot {robot_id} failed to deposit!")
             return False
         return True

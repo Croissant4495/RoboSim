@@ -16,7 +16,7 @@ referee = Referee(SupervisorRobot, robots_manager, map_manager, collectable_mana
 
 i = 0
 # Spawn initial obstacles and collectables
-for _ in range(5):
+for _ in range(3):
     map_manager.spawn_random_obstacle()
 
 for _ in range(25):

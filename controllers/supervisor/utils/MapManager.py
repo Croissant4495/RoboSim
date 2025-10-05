@@ -1,4 +1,3 @@
-from controller import Supervisor
 import random
 import math
 
@@ -24,7 +23,7 @@ class MapManager:
             def_name = node.getDef()
             if "trap" in def_name:
                 zone_type = "trap"
-                size = (0.1, 0.1, 0.001)
+                size = (0.2, 0.2, 0.001)
             else:
                 size = node.getField("size").getSFVec3f()
 

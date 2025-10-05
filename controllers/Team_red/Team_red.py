@@ -9,6 +9,7 @@ state = "exploring"
 wait_counter = 0
 step_count = 0
 
+inventory = []
 
 def get_camera_colors():
     """Read both cameras and return approximate colors"""
@@ -55,6 +56,10 @@ def classify_color(r, g, b):
         return "orange"
     return "floor"
 
+def has_items():
+    """Check if the robot has any collectables in its inventory."""
+    return len(inventory) > 0
+        
 
 print(f"Robot {ROBOT_ID} starting...")
 
@@ -74,9 +79,9 @@ while robot.run_sim() != -1:
     # Check for yellow traps - BACK OUT at an angle
     if "yellow" in [color1, color2]:
         print(f"YELLOW TRAP! Backing out at angle...")
-        robot.set_speed(-MAX_SPEED, -MAX_SPEED / 2)  # Back and turn
+        robot.set_speed(-MAX_SPEED/2, MAX_SPEED/2)  # Back and turn
         state = "avoiding"
-        wait_counter = 20  # Brief maneuver
+        wait_counter = 10  # Brief maneuver
         continue
 
     # Handle states
@@ -109,17 +114,29 @@ while robot.run_sim() != -1:
                 pos = robot.get_position()
                 type_id = COLLECTABLE_TYPES[collectable_type]
                 robot.send_message(MSG_COLLECT, type_id)
+                inventory.append(collectable_type)  
                 print(
                     f">>> Robot {ROBOT_ID} at ({pos[0]:.3f},{pos[1]:.3f}) sent COLLECT for {collectable_type} (type_id={type_id})")
                 state = "collecting"
                 wait_counter = int(1200 / robot.timestep)  # Wait 1.2 seconds to be safe
 
         # Check for deposit area (if EITHER camera sees orange)
-        elif color1 == "orange" or color2 == "orange":
+        elif color1 == "orange" or color2 == "orange" and has_items():
             # Move forward a bit to ensure we're fully in deposit area
-            robot.set_speed(MAX_SPEED / 2, MAX_SPEED / 2)
-            state = "entering_deposit"
-            wait_counter = 10  # Brief forward movement
+            if color1 != "orange":
+                robot.set_speed(-MAX_SPEED / 2, MAX_SPEED / 2)  # Turn left
+            elif color2 != "orange":
+                robot.set_speed(MAX_SPEED / 2, -MAX_SPEED / 2)  # Turn right
+            else:
+                # Both cameras see orange -> aligned with deposit
+                if has_items():
+                    print("Aligned with deposit area, initiating deposit...")
+                    robot.set_speed(MAX_SPEED / 2, MAX_SPEED / 2)
+                    state = "entering_deposit"
+                    wait_counter = 0  # Brief forward movement
+                else:
+                    print("Deposit detected, but inventory is empty. Continuing exploration.")
+                    state = "exploring"
 
     elif state == "collecting":
         robot.set_speed(0, 0)
@@ -139,10 +156,15 @@ while robot.run_sim() != -1:
         if wait_counter <= 0:
             # Now stop and deposit
             robot.set_speed(0, 0)
-            robot.send_message(MSG_DEPOSIT, 0)
-            print(f">>> Robot {ROBOT_ID} sent DEPOSIT")
-            state = "depositing"
-            wait_counter = int(3200 / robot.timestep)
+            if has_items():
+                robot.send_message(MSG_DEPOSIT, 0)
+                robot.toggle_led()
+                print(f">>> Robot {ROBOT_ID} sent DEPOSIT")
+                state = "depositing"
+                wait_counter = int(3200 / robot.timestep)
+            else:
+                print("No items to deposit, resuming exploration")
+                state = "exploring"
 
     elif state == "avoiding":
         # Continue the avoidance maneuver
@@ -156,4 +178,6 @@ while robot.run_sim() != -1:
         wait_counter -= 1
         if wait_counter <= 0:
             print("Deposit complete, resuming exploration")
+            robot.toggle_led()
+            inventory.clear()  
             state = "exploring"

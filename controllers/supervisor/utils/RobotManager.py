@@ -94,9 +94,8 @@ class RobotManager:
         Returns (left_color, right_color) as strings.
         Possible values: 'deposit', 'black', 'red', 'green', etc.
         """
-
-        return "deposit" , "deposit"
-
+        return "deposit", "deposit"
+    
         left_color = "unknown"
         right_color = "unknown"
 
@@ -117,5 +116,5 @@ class RobotManager:
                 self.right_sensor.imageGetBlue(image, 1, 0, 0),
             )
             right_color = self.classify_color(rgb)
-
+        print(f"Colors: {left_color} , {right_color}")
         return left_color, right_color

@@ -1,4 +1,3 @@
-from controller import Supervisor
 import random
 from utils.config import *
 
